@@ -1,5 +1,9 @@
 ''' Hybrid Deep Learning Model for Cancer recognition
-Using SOM and ANN'''
+Using SOM and ANN
+I use the SOM in an usupervised manner to aggragate the malignant tumors -without knowing they are malignant/benign
+and than i use the ANN to be able to predict from the tumor data(radius,texture etc..)
+the patiants the probabilty for having a malignant tumor
+'''
 
 
 #Identify the tumors with the Self-Organizing Map
@@ -51,12 +55,9 @@ show()
 
 # Finding the malignant tumor
 mappings = som.win_map(X)
-toumors = mappings[(8,3)]#better check the seed first-has some deviations from what iv'e seen
+toumors= np.concatenate((mappings[(2,4)], mappings[(8,3)]), axis = 0)#better check the seed first-has some deviations from what iv'e seen
+#toumors = mappings[(8,3)]
 toumors = sc.inverse_transform(toumors)
-
-
-
-#  Going from Unsupervised to Supervised Deep Learning
 
 # Creating the matrix of features
 patients = dataset.iloc[:, 1:].values
@@ -82,12 +83,8 @@ from keras import Dense
 classifier = Sequential()
 
 # Adding the input layer and the first hidden layer
-classifier.add(Dense(units = 2, kernel_initializer = 'uniform', activation = 'relu', input_dim = 15))
-
-# Adding the output layer
+classifier.add(Dense(units = 2, kernel_initializer = 'uniform', activation = 'relu', input_dim = 31))
 classifier.add(Dense(units = 1, kernel_initializer = 'uniform', activation = 'sigmoid'))
-
-# Compiling the ANN
 classifier.compile(optimizer = 'adam', loss = 'binary_crossentropy', metrics = ['accuracy'])
 
 # Fitting the ANN to the Training set
